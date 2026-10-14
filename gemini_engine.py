@@ -47,7 +47,9 @@ class GeminiMCQEngine:
         manifest_callback: Optional[Callable[[List[Dict[str, Any]]], None]] = None,
         abort_event: Optional[threading.Event] = None,
         auto_switch_models: bool = True,
-        chunk_size: int = 30
+        chunk_size: int = 30,
+        *args,
+        **kwargs
     ):
         self.api_key = api_key.strip()
         cleaned_model = model_name.strip().replace("models/", "") if model_name.strip() else "gemini-3.8-flash"

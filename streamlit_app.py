@@ -308,17 +308,31 @@ def background_worker(pdf_bytes: bytes, filename: str, g_api_key: str, wh_url: s
 
     try:
         sheets_mgr = AppsScriptManager(wh_url, t_name)
-        engine = GeminiMCQEngine(
-            api_key=g_api_key,
-            model_name=model,
-            inter_request_delay=delay,
-            log_callback=task_mgr.add_log,
-            progress_callback=task_mgr.update_progress,
-            preview_callback=task_mgr.add_mcq,
-            manifest_callback=task_mgr.set_manifest,
-            auto_switch_models=do_switch,
-            chunk_size=c_size
-        )
+        try:
+            engine = GeminiMCQEngine(
+                api_key=g_api_key,
+                model_name=model,
+                inter_request_delay=delay,
+                log_callback=task_mgr.add_log,
+                progress_callback=task_mgr.update_progress,
+                preview_callback=task_mgr.add_mcq,
+                manifest_callback=task_mgr.set_manifest,
+                auto_switch_models=do_switch,
+                chunk_size=c_size
+            )
+        except TypeError:
+            engine = GeminiMCQEngine(
+                api_key=g_api_key,
+                model_name=model,
+                inter_request_delay=delay,
+                log_callback=task_mgr.add_log,
+                progress_callback=task_mgr.update_progress,
+                preview_callback=task_mgr.add_mcq,
+                manifest_callback=task_mgr.set_manifest,
+                auto_switch_models=do_switch
+            )
+            if hasattr(engine, "chunk_size"):
+                engine.chunk_size = c_size
 
         backup_file = temp_pdf + "_backup.json"
         success = engine.run_pipeline(
