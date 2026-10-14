@@ -116,6 +116,11 @@ class AppsScriptManager:
                 time.sleep(2)
         return 0, "Failed after retries."
 
+    def append_rows(self, mcq_list: List[Dict[str, str]]) -> bool:
+        """Alias for append_mcqs for unified manager interface."""
+        count, _ = self.append_mcqs(mcq_list)
+        return count > 0
+
 class SheetsManager:
     """Google Sheets integration using Service Account JSON via gspread."""
     def __init__(self, service_account_path: str, spreadsheet_id: str, tab_name: str = "Sheet1"):
