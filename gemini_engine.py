@@ -501,7 +501,14 @@ class GeminiMCQEngine:
                         if self.is_aborted():
                             break
                         sub_batch = set_mcqs[i:i + chunk_size]
-                        success_sheet = sheets_manager.append_rows(sub_batch)
+                        if hasattr(sheets_manager, "append_rows"):
+                            res = sheets_manager.append_rows(sub_batch)
+                            success_sheet = bool(res[0] > 0 if isinstance(res, tuple) else res)
+                        elif hasattr(sheets_manager, "append_mcqs"):
+                            cnt, _ = sheets_manager.append_mcqs(sub_batch)
+                            success_sheet = cnt > 0
+                        else:
+                            success_sheet = False
                         if success_sheet:
                             self.log("SUCCESS", f"Synced rows {i+1} to {min(i+chunk_size, count)} of '{s_name}' to Sheet.")
                         else:
